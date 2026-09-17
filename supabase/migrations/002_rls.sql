@@ -1,0 +1,11 @@
+alter table public.profiles enable row level security; alter table public.projects enable row level security; alter table public.tasks enable row level security; alter table public.tags enable row level security; alter table public.task_tags enable row level security; alter table public.checklist_items enable row level security; alter table public.task_history enable row level security; alter table public.events enable row level security; alter table public.notifications enable row level security; alter table public.user_settings enable row level security;
+create policy profiles_self on public.profiles for all using(id=auth.uid()) with check(id=auth.uid());
+create policy projects_owner on public.projects for all using(owner_id=auth.uid()) with check(owner_id=auth.uid());
+create policy tasks_owner on public.tasks for all using(owner_id=auth.uid()) with check(owner_id=auth.uid());
+create policy tags_owner on public.tags for all using(owner_id=auth.uid()) with check(owner_id=auth.uid());
+create policy task_tags_owner on public.task_tags for all using(exists(select 1 from public.tasks t where t.id=task_id and t.owner_id=auth.uid())) with check(exists(select 1 from public.tasks t where t.id=task_id and t.owner_id=auth.uid()));
+create policy checklist_owner on public.checklist_items for all using(owner_id=auth.uid()) with check(owner_id=auth.uid());
+create policy history_read on public.task_history for select using(owner_id=auth.uid());
+create policy events_owner on public.events for all using(owner_id=auth.uid()) with check(owner_id=auth.uid());
+create policy notifications_owner on public.notifications for all using(owner_id=auth.uid()) with check(owner_id=auth.uid());
+create policy settings_self on public.user_settings for all using(user_id=auth.uid()) with check(user_id=auth.uid());

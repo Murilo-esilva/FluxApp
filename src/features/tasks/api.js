@@ -1,0 +1,7 @@
+import {supabase} from '../../shared/supabase';
+export async function getTasks(){const {data,error}=await supabase.from('tasks').select('*,projects(name,color),checklist_items(*)').is('archived_at',null).order('position');if(error)throw error;return data}
+export async function saveTask(task){const payload={...task};delete payload.id;delete payload.projects;delete payload.checklist_items;Object.keys(payload).forEach(k=>payload[k]===''&&(payload[k]=null));if(task.id){const {data,error}=await supabase.from('tasks').update(payload).eq('id',task.id).select().single();if(error)throw error;return data}const {data,error}=await supabase.from('tasks').insert(payload).select().single();if(error)throw error;return data}
+export async function archiveTask(id){const {error}=await supabase.from('tasks').update({archived_at:new Date().toISOString()}).eq('id',id);if(error)throw error}
+export async function getProjects(){const {data,error}=await supabase.from('projects').select('*').is('archived_at',null).order('name');if(error)throw error;return data}
+export async function saveProject(project){const {data,error}=project.id?await supabase.from('projects').update({name:project.name,color:project.color}).eq('id',project.id).select().single():await supabase.from('projects').insert(project).select().single();if(error)throw error;return data}
+export async function archiveProject(id){const {error}=await supabase.from('projects').update({archived_at:new Date().toISOString()}).eq('id',id);if(error)throw error}

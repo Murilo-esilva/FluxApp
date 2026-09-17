@@ -27,7 +27,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: npm
 
       - name: Instalar dependências
         run: npm install
@@ -48,6 +47,7 @@ jobs:
           path: ./dist
 
   deploy:
+    name: Publicar
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -56,6 +56,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Publicar GitHub Pages
+      - name: Publicar no GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
